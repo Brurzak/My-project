@@ -1,0 +1,46 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: BobsBuddy.Minions.Murloc.ColdlightDiver
+// Assembly: BobsBuddy, Version=1.33.32.0, Culture=neutral, PublicKeyToken=null
+// MVID: 4041A954-F5FD-4AD8-89CE-27FF37FFCCA4
+// Assembly location: C:\Users\franc\Desktop\BobsBuddy.dll
+
+using BobsBuddy.Simulation;
+using System;
+
+#nullable enable
+namespace BobsBuddy.Minions.Murloc;
+
+public class ColdlightDiver(string cardId, bool controlledByPlayer, Simulator simulator) : 
+  Minion(cardId, controlledByPlayer, simulator),
+  IBattlecry,
+  IEntity,
+  IDeathrattle
+{
+  public const string CardId = "BG33_894";
+  public const string Text = "<b>Battlecry and Deathrattle:</b> Get a random Tier 1 Tavern spell.";
+  public const string GoldenText = "<b>Battlecry and Deathrattle:</b> Get two random Tier 1 Tavern spells.";
+
+  public Action? OnBattlecry()
+  {
+    return (Action) (() =>
+    {
+      this.AddSpellToFriendlyHand();
+      if (!this.golden)
+        return;
+      this.AddSpellToFriendlyHand();
+    });
+  }
+
+  public Action<Minion> GetDeathrattle() => ColdlightDiver.Deathrattle(this.golden);
+
+  public static Action<Minion> Deathrattle(bool golden)
+  {
+    return (Action<Minion>) (minion =>
+    {
+      minion.AddSpellToFriendlyHand();
+      if (!golden)
+        return;
+      minion.AddSpellToFriendlyHand();
+    });
+  }
+}
